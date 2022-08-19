@@ -1,5 +1,11 @@
 package com.example.mvvmudemy.model;
 
-public interface CountryApi {
+import java.util.List;
 
+import io.reactivex.rxjava3.core.Single;
+import retrofit2.http.GET;
+
+public interface CountryApi {
+    @GET("all")
+    Single<List<Country>> getCountries();
 }

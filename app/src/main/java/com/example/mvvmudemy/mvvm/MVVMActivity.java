@@ -3,11 +3,9 @@ package com.example.mvvmudemy.mvvm;
 import androidx.appcompat.app.AppCompatActivity;
 
 
-import android.arch.lifecycle.LifecycleOwner;
-import androidx.annotation.Nullable;
-import android.arch.lifecycle.ViewModel;
+import androidx.lifecycle.LifecycleOwner;
 import androidx.lifecycle.ViewModelProvider;
-import android.arch.lifecycle.ViewModelProviders;
+
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -37,7 +35,10 @@ public class MVVMActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_mvvmactivity);
-
+        setTitle("MVVMActivity");
+        list=findViewById(R.id.list);
+        retryButton=findViewById(R.id.retryButton);
+        progress=findViewById(R.id.progress);
 
         adapter=new ArrayAdapter<>(this,R.layout.row_layout,R.id.listText,listValues);
         list.setAdapter(adapter);

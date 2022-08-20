@@ -5,6 +5,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -28,7 +29,7 @@ public class MVCActivity extends AppCompatActivity {
         setTitle("MVC Activity");
 
         list=findViewById(R.id.list);
-        controller=new CountriesController(this);
+        controller=new CountriesController(MVCActivity.this);
         adapter=new ArrayAdapter<>(this,R.layout.row_layout,R.id.listText,listValues);
         list.setAdapter(adapter);
         list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -46,5 +47,19 @@ public class MVCActivity extends AppCompatActivity {
     }
     public static Intent getIntent(Context context){
         return new Intent(context, MVCActivity.class);
+    }
+    public void onRetry(View view) {
+        controller.onRefresh();
+        list.setVisibility(View.GONE);
+        /*retryButton.setVisibility(View.GONE);
+        progress.setVisibility(View.VISIBLE);*/
+    }
+
+    public void onError() {
+        Log.d("onError","MVCACtivity");
+        Toast.makeText(this, "getString(R.string.error_message)", Toast.LENGTH_SHORT).show();
+        /*progress.setVisibility(View.GONE);
+        list.setVisibility(View.GONE);
+        retryButton.setVisibility(View.VISIBLE);*/
     }
 }

@@ -1,5 +1,7 @@
 package com.example.mvvmudemy.mvc;
 
+import android.util.Log;
+
 import com.example.mvvmudemy.model.CountriesService;
 import com.example.mvvmudemy.model.Country;
 
@@ -7,8 +9,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
-import io.reactivex.rxjava3.annotations.NonNull;
 import io.reactivex.rxjava3.observers.DisposableSingleObserver;
+import io.reactivex.rxjava3.schedulers.Schedulers;
 
 public class CountriesController {
     private MVCActivity view;
@@ -20,21 +22,32 @@ public class CountriesController {
     }
     private void fetchCountries(){
         service.getCountries()
-                .subscribeOn(AndroidSchedulers.mainThread())
+                .subscribeOn(Schedulers.newThread())
+                .observeOn(AndroidSchedulers.mainThread())
                 .subscribeWith(new DisposableSingleObserver<List<Country>>() {
                     @Override
-                    public void onSuccess(@NonNull List<Country> countries) {
-                        List<String> countryNames=new ArrayList<>();
-                        for (Country country:countries){
-                            countryNames.add(country.countryName);
+                    public void onSuccess(List<Country> countries) {
+                        try {
+                            Log.d("Countries","fetchCountries");
+                            List<String> countryNames=new ArrayList<>();
+                            for (int i=0;i<countries.size();i++){
+                                Log.d("loop","fetchCountries "+countries.get(i).countryName);
+                                countryNames.add(countries.get(i).countryName);
+                            }
+                            view.setValues(countryNames);
                         }
-                        view.setValues(countryNames);
+                        catch (Exception e){
+                            Log.d("Exception","fetchCountries"+e);
+                        }
                     }
-
                     @Override
-                    public void onError(@NonNull Throwable e) {
-
+                    public void onError(Throwable e) {
+                        Log.d("onError","fetchCountries"+e);
+                        view.onError();
                     }
                 });
+    }
+    public void onRefresh() {
+        fetchCountries();
     }
 }

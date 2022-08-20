@@ -20,7 +20,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class MVCActivity extends AppCompatActivity {
-    private List<String> listValues=new ArrayList<>();
+    private final List<String> listValues=new ArrayList<>();
     private ArrayAdapter<String> adapter;
     private ListView list;
     private CountriesController controller;

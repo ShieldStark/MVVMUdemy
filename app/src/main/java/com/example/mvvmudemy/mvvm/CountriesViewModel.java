@@ -1,6 +1,11 @@
-package com.example.mvvmudemy.mvc;
+package com.example.mvvmudemy.mvvm;
 
+import android.app.Application;
+import android.arch.lifecycle.LiveData;
+import android.arch.lifecycle.MutableLiveData;
 import android.util.Log;
+
+import androidx.lifecycle.AndroidViewModel;
 
 import com.example.mvvmudemy.model.CountriesService;
 import com.example.mvvmudemy.model.Country;
@@ -12,13 +17,20 @@ import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
 import io.reactivex.rxjava3.observers.DisposableSingleObserver;
 import io.reactivex.rxjava3.schedulers.Schedulers;
 
-public class CountriesController {
-    private final MVCActivity view;
+public class CountriesViewModel extends AndroidViewModel {
     private final CountriesService service;
-    public CountriesController(MVCActivity view){
-        this.view=view;
+    private final MutableLiveData<List<String>> countries=new MutableLiveData<>();
+    private final MutableLiveData<Boolean> countryError=new MutableLiveData<>();
+    public CountriesViewModel(Application application){
+        super(application);
         service=new CountriesService();
         fetchCountries();
+    }
+    public LiveData<List<String>> getCountries(){
+        return countries;
+    }
+    public LiveData<Boolean> getCountriesError(){
+        return countryError;
     }
     private void fetchCountries(){
         service.getCountries()
@@ -26,15 +38,16 @@ public class CountriesController {
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeWith(new DisposableSingleObserver<List<Country>>() {
                     @Override
-                    public void onSuccess(List<Country> countries) {
+                    public void onSuccess(List<Country> values) {
                         try {
                             Log.d("Countries","fetchCountries");
                             List<String> countryNames=new ArrayList<>();
-                            for (int i=0;i<countries.size();i++){
-                                Log.d("loop","fetchCountries "+countries.get(i).countryName);
-                                countryNames.add(countries.get(i).countryName);
+                            for (int i=0;i<values.size();i++){
+                                Log.d("loop","fetchCountries "+values.get(i).countryName);
+                                countryNames.add(values.get(i).countryName);
                             }
-                            view.setValues(countryNames);
+                            countries.setValue(countryNames);
+                            countryError.setValue(false);
                         }
                         catch (Exception e){
                             Log.d("Exception","fetchCountries"+e);
@@ -43,7 +56,7 @@ public class CountriesController {
                     @Override
                     public void onError(Throwable e) {
                         Log.d("onError","fetchCountries"+e);
-                        view.onError();
+                        countryError.setValue(true);
                     }
                 });
     }

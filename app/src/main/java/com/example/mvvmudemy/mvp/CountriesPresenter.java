@@ -1,9 +1,10 @@
-package com.example.mvvmudemy.mvc;
+package com.example.mvvmudemy.mvp;
 
 import android.util.Log;
 
 import com.example.mvvmudemy.model.CountriesService;
 import com.example.mvvmudemy.model.Country;
+import com.example.mvvmudemy.mvc.MVCActivity;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -12,10 +13,10 @@ import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
 import io.reactivex.rxjava3.observers.DisposableSingleObserver;
 import io.reactivex.rxjava3.schedulers.Schedulers;
 
-public class CountriesController {
-    private final MVCActivity view;
+public class CountriesPresenter {
+    private final View view;
     private final CountriesService service;
-    public CountriesController(MVCActivity view){
+    public CountriesPresenter(View view){
         this.view=view;
         service=new CountriesService();
         fetchCountries();
@@ -49,5 +50,9 @@ public class CountriesController {
     }
     public void onRefresh() {
         fetchCountries();
+    }
+    public interface View{
+        void setValues(List<String> countries);
+        void onError();
     }
 }
